@@ -1,0 +1,57 @@
+version: "3.8"
+services:
+    db:
+        container_name: levart-wigunar-db
+        image: postgres:alpine
+        restart: always
+        environment:
+            POSTGRES_PASSWORD: password
+            POSTGRES_USER: root
+            POSTGRES_DB: levart-wigunar-db
+        networks:
+            - network
+        volumes:
+            - db:/var/lib/postgresql
+        ports:
+            - 15432:5432
+    api:
+        container_name: levart-wigunar-api
+        image: levart-wigunar-api:latest
+        build:
+            dockerfile: ./docker/Dockerfile
+        restart: always
+        working_dir: /var/www/html
+        depends_on:
+            - db
+        volumes:
+            - web:/var/www/html/storage
+        ports:
+            - 9091:80
+        environment:
+            - APP_NAME="Levart Wiguna R"
+            - APP_ENV=local
+            - APP_DEBUG=true
+            - DB_CONNECTION=pgsql
+            - DB_HOST=db
+            - DB_DATABASE=levart-wigunar-db
+            - DB_PORT=5432
+            - DB_USERNAME=root
+            - DB_PASSWORD=password
+            - MAIL_MAILER=smtp
+            - MAIL_HOST=smtp.ethereal.email
+            - MAIL_PORT=587
+            - MAIL_USERNAME=newell.mayert64@ethereal.email
+            - MAIL_PASSWORD=FAQAuDG3sYkkgPe9a2
+            - MAIL_ENCRYPTION=tls
+            - MAIL_FROM_ADDRESS="newell.mayert64@ethereal.email"
+            - MAIL_FROM_NAME="${APP_NAME}"
+        networks:
+            - network
+volumes:
+    db:
+        driver: local
+    web:
+        driver: local
+networks:
+    network:
+        driver: bridge

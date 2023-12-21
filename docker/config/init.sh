@@ -4,6 +4,8 @@ sed -e "s~%%USER%%~$USER~" \
 		-e "s~%%PWD%%~$PWD~" \
 		/etc/supervisor/conf.d/supervisor.conf.tpl > /etc/supervisor/supervisord.conf
 
+php artisan passport:install
+
 php /var/www/html/artisan migrate
 
 php artisan storage:link
