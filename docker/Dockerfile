@@ -1,4 +1,4 @@
-FROM php:8.0-fpm
+FROM php:8.2-fpm
 
 ENV USER=service
 ENV UID=1000
@@ -22,6 +22,10 @@ RUN apt-get update && apt-get install -y \
     lsb-release \
     gnupg \
     libpq-dev
+
+RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
+
+RUN apt-get update && apt-get install -y nodejs
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -60,7 +64,7 @@ WORKDIR $PWD
 # Copy app files
 COPY . .
 
-RUN composer install --no-dev
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev
 
 RUN cp .env.example .env
 
